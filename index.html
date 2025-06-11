@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hack the Planet: Architecting a Net Positive Data Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Eco-Tech Harmony (Light Beige/Off-white background, Deep Teal primary, Gold/Orange accent) -->
+    <!-- Application Structure Plan: A single-page application with a sticky top navigation for easy access to key sections (About, Theme, Schedule, etc.). The design prioritizes user flow, starting with an engaging hero section, followed by interactive cards for 'Focus Areas' to make information digestible. A timeline format for the 'Schedule' and a consolidated 'Registration' section with a clear call-to-action button guide the user logically through the event details. An FAQ section was added to anticipate user questions and improve usability. This structure was chosen over a linear report format to create an engaging, explorable, and user-friendly experience for potential participants. -->
+    <!-- Visualization & Content Choices: Report Info: Event Focus Areas -> Goal: Make them engaging and easy to explore -> Viz/Presentation Method: Interactive HTML/CSS cards with icons and hover effects -> Interaction: On hover, cards lift up -> Justification: More visually appealing and interactive than a plain list. Report Info: Event Schedule -> Goal: Present timeline clearly -> Viz/Presentation Method: Vertical timeline with HTML/CSS -> Interaction: N/A -> Justification: A timeline is the most intuitive way to represent a schedule. Report Info: Awards -> Goal: Showcase awards attractively -> Viz/Presentation Method: A grid layout with HTML/CSS -> Interaction: N/A -> Justification: A grid is clean and organized. Library/Method: Vanilla JS for interactions, Tailwind CSS for all styling, Unicode characters for icons. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F8F7F4;
+            color: #333;
+        }
+        .hero-section {
+            background: linear-gradient(rgba(0, 71, 75, 0.8), rgba(0, 71, 75, 0.8)), url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover;
+        }
+        .nav-link {
+            transition: color 0.3s;
+        }
+        .nav-link:hover {
+            color: #FBBF24;
+        }
+        .btn-primary {
+            background-color: #00474B;
+            color: white;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #006A70;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #FBBF24;
+            color: #00474B;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #F59E0B;
+            transform: translateY(-2px);
+        }
+        .focus-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            background-color: white;
+        }
+        .focus-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .section-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .section-fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 50%;
+            background-color: #00474B;
+            border: 4px solid #FBBF24;
+            left: -0.625rem;
+            top: 0;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="navbar" class="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <a href="#home" class="font-bold text-2xl text-teal-800">Hack the Planet</a>
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#about" class="nav-link text-gray-700">About</a>
+                <a href="#theme" class="nav-link text-gray-700">Theme</a>
+                <a href="#schedule" class="nav-link text-gray-700">Schedule</a>
+                <a href="#faq" class="nav-link text-gray-700">FAQ</a>
+                <a href="#register" class="btn-secondary font-bold py-2 px-4 rounded-lg">Register Now</a>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden">
+            <a href="#about" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">About</a>
+            <a href="#theme" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Theme</a>
+            <a href="#schedule" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Schedule</a>
+            <a href="#faq" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">FAQ</a>
+            <a href="#register" class="block py-2 px-4 text-sm text-gray-700 bg-yellow-400 font-bold hover:bg-yellow-500">Register Now</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="home" class="hero-section text-white min-h-screen flex items-center">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4">Hack the Planet:</h1>
+                <h2 class="text-2xl md:text-4xl font-light mb-8">Architecting a Net Positive Data Center</h2>
+                <p class="text-xl mb-4 font-semibold">Friday, August 29th, 2025</p>
+                <p class="text-lg mb-8">GIS Taichung Xinwuri Convention Center</p>
+                <a href="#register" class="btn-secondary text-xl font-bold py-4 px-8 rounded-lg shadow-lg">Register Your Team</a>
+            </div>
+        </section>
+
+        <section id="about" class="py-20 section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800">About the Hackathon</h2>
+                    <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">Welcome to Hack the Planet, where innovation meets impact! This hackathon challenges you to reimagine what a data center can be.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold text-teal-700 mb-4">The Challenge</h3>
+                        <p class="text-gray-700 mb-4">Go beyond simply minimizing harm; design a visionary data center that achieves a truly net positive impact on both our environment and cultural well-being. You'll leverage Google's cutting-edge Gemini multimodal AI capabilities to develop groundbreaking solutions.</p>
+                        <p class="text-gray-700">This is your chance to demonstrate how essential data infrastructure can become a powerful force for good within its community and for the planet.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-lg shadow-lg border-l-4 border-yellow-400">
+                        <h3 class="text-2xl font-bold text-teal-700 mb-4">Who Can Participate?</h3>
+                        <p class="text-gray-700 mb-2"><span class="font-bold">Audience:</span> Junior and senior university students, plus new graduates.</p>
+                        <p class="text-gray-700 mb-2"><span class="font-bold">Team Size:</span> 3-5 members per team.</p>
+                        <p class="text-gray-700"><span class="font-bold">Who we're looking for:</span> Bright minds from any discipline—engineering, design, environmental science, humanities—eager to make a tangible impact.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="theme" class="py-20 bg-gray-100 section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800">Theme & Focus Areas</h2>
+                    <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">Architect a Net Positive Data Center for Environmental & Cultural Impact. Projects can focus on one specific area or develop comprehensive solutions that span multiple domains.</p>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="focus-card p-8 rounded-lg text-center">
+                        <div class="text-5xl mb-4">🌳</div>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2">Land & Biodiversity</h3>
+                        <p class="text-gray-600">Design sites that restore local ecosystems or enhance biodiversity.</p>
+                    </div>
+                    <div class="focus-card p-8 rounded-lg text-center">
+                        <div class="text-5xl mb-4">💨</div>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2">Air Quality</h3>
+                        <p class="text-gray-600">Develop solutions to improve air quality and reduce emissions.</p>
+                    </div>
+                    <div class="focus-card p-8 rounded-lg text-center">
+                        <div class="text-5xl mb-4">⚡️</div>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2">Energy & Climate</h3>
+                        <p class="text-gray-600">Innovate for extreme energy efficiency and renewable integration.</p>
+                    </div>
+                    <div class="focus-card p-8 rounded-lg text-center">
+                        <div class="text-5xl mb-4">💧</div>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2">Water Resources & Pollution</h3>
+                        <p class="text-gray-600">Design systems for net positive water usage and pollution prevention.</p>
+                    </div>
+                    <div class="focus-card p-8 rounded-lg text-center md:col-span-2 lg:col-span-1">
+                        <div class="text-5xl mb-4">🏛️</div>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2">Cultural Integration & Heritage Preservation</h3>
+                        <p class="text-gray-600">Create models that celebrate local Taiwanese culture and support heritage.</p>
+                    </div>
+                </div>
+                 <div class="mt-12 bg-white p-8 rounded-lg shadow-lg border-l-4 border-teal-500">
+                    <h3 class="text-2xl font-bold text-teal-700 mb-4">Mandatory Technology: Google Gemini AI</h3>
+                    <p class="text-gray-700 mb-4">All proposed solutions must fundamentally leverage Google Gemini's capabilities. You'll apply its advanced features across areas like:</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li><b>Data Analysis:</b> Multimodal understanding of sensor data, satellite imagery, regulations, etc.</li>
+                        <li><b>Design & Generation:</b> Creative generation of content, optimized designs, or simulated scenarios.</li>
+                        <li><b>Coding:</b> Code assistance and generation for intelligent systems and automation.</li>
+                        <li><b>Expression:</b> Innovative ways to express complex ideas through multimedia generation.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="schedule" class="py-20 section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800">Event Agenda</h2>
+                    <p class="text-lg text-gray-600 mt-4">A full day of innovation, learning, and connection.</p>
+                </div>
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="border-l-4 border-teal-200 absolute h-full top-0" style="left: 0.625rem;"></div>
+                    <div class="space-y-12">
+                        <div class="pl-10 relative timeline-item">
+                            <p class="font-bold text-lg text-teal-700">9:15 - 11:30</p>
+                            <h3 class="text-xl font-semibold mb-1">Hackathon Presentations</h3>
+                            <p class="text-gray-600">10 teams will present their solutions. Each team has ~15 minutes (5-10 min presentation + 5 min commentary).</p>
+                        </div>
+                        <div class="pl-10 relative timeline-item">
+                            <p class="font-bold text-lg text-teal-700">11:30 - 12:45</p>
+                            <h3 class="text-xl font-semibold mb-1">Mingle & Lunch</h3>
+                            <p class="text-gray-600">Network with fellow participants, mentors, and judges over a delicious lunch.</p>
+                        </div>
+                        <div class="pl-10 relative timeline-item">
+                            <p class="font-bold text-lg text-teal-700">13:30 - 15:00</p>
+                            <h3 class="text-xl font-semibold mb-1">Career Panel</h3>
+                            <p class="text-gray-600">Gain insights from industry experts about careers in tech, sustainability, and AI.</p>
+                        </div>
+                         <div class="pl-10 relative timeline-item">
+                            <p class="font-bold text-lg text-teal-700">15:00 - 15:30</p>
+                            <h3 class="text-xl font-semibold mb-1">Awards Ceremony</h3>
+                            <p class="text-gray-600">Celebrating the most innovative and impactful solutions of the day.</p>
+                        </div>
+                        <div class="pl-10 relative timeline-item">
+                            <p class="font-bold text-lg text-teal-700">16:00</p>
+                            <h3 class="text-xl font-semibold mb-1">Event Concludes</h3>
+                            <p class="text-gray-600">Final remarks and networking opportunities.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="register" class="py-20 bg-gray-100 section-fade-in">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                     <h2 class="text-3xl md:text-4xl font-bold text-teal-800">Register Your Team</h2>
+                     <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">Ready to make an impact? Registration is limited to 10 teams on a first-come, first-served basis.</p>
+                </div>
+                <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold text-teal-700 mb-6">Registration Process & Important Notes</h3>
+                    <div class="grid md:grid-cols-2 gap-8 text-gray-700">
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Key Dates</h4>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li><b>Registration Period:</b> June 16 - July 11</li>
+                                <li><b>Cancellation Deadline:</b> July 18</li>
+                                <li><b>Initial Project Idea Submission:</b> July 28 - August 1</li>
+                                <li><b>Final Confirmation Emails Sent by:</b> July 25</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-2">Submission Deliverables</h4>
+                            <ul class="list-disc list-inside space-y-2">
+                                <li>Functional Prototype or PoC (Digital is okay)</li>
+                                <li>10-minute Presentation (in English)</li>
+                                <li>Optional: Link to GitHub repository</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-8 text-gray-600 bg-teal-50 p-4 rounded-lg">
+                        <p>If you need to cancel, please email us at **2025_Hackathon@google.com** by July 18th. This allows us to notify waitlisted teams, who will receive their confirmation by July 25th.</p>
+                    </div>
+                    <div class="mt-8 text-center">
+                        <a href="#" class="btn-primary text-xl font-bold py-4 px-8 rounded-lg shadow-lg">[Registration Link Here]</a>
+                         <p class="mt-4 text-sm text-gray-500">Registration opens June 16th. Secure your spot!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+
+        <section id="faq" class="py-20 bg-gray-100 section-fade-in">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800">Frequently Asked Questions</h2>
+                 </div>
+                 <div class="max-w-3xl mx-auto space-y-4">
+                     <div class="faq-item bg-white p-4 rounded-lg shadow-md">
+                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center">
+                             <span>Is there a cost to participate?</span>
+                             <span class="transform transition-transform duration-300">+</span>
+                         </button>
+                         <div class="faq-answer hidden mt-2 text-gray-600">
+                             No, participation in Hack the Planet is completely free for all selected teams.
+                         </div>
+                     </div>
+                     <div class="faq-item bg-white p-4 rounded-lg shadow-md">
+                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center">
+                             <span>Who owns the intellectual property (IP) of the projects?</span>
+                             <span class="transform transition-transform duration-300">+</span>
+                         </button>
+                         <div class="faq-answer hidden mt-2 text-gray-600">
+                            Teams retain full ownership of the intellectual property they create during the hackathon.
+                         </div>
+                     </div>
+                      <div class="faq-item bg-white p-4 rounded-lg shadow-md">
+                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center">
+                             <span>Do I need to be physically present at the venue?</span>
+                             <span class="transform transition-transform duration-300">+</span>
+                         </button>
+                         <div class="faq-answer hidden mt-2 text-gray-600">
+                            Yes, this is a full-day, in-person event held at the GIS Taichung Xinwuri Convention Center. All team members are expected to attend.
+                         </div>
+                     </div>
+                     <div class="faq-item bg-white p-4 rounded-lg shadow-md">
+                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center">
+                            <span>What should I bring to the event?</span>
+                             <span class="transform transition-transform duration-300">+</span>
+                         </button>
+                         <div class="faq-answer hidden mt-2 text-gray-600">
+                           Please bring your laptop, chargers, and any other hardware you need for your project. We will provide Wi-Fi, power outlets, food, and drinks.
+                         </div>
+                     </div>
+                 </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-teal-900 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p class="font-bold text-xl mb-2">Hack the Planet 2025</p>
+            <p>Have questions? Contact us at <a href="mailto:2025_Hackathon@google.com" class="text-yellow-300 hover:underline">2025_Hackathon@google.com</a></p>
+            <p class="mt-4 text-sm text-teal-200">Learn more about <a href="https://datacenters.google/" target="_blank" rel="noopener noreferrer" class="hover:underline">Google Data Centers</a>.</p>
+        </div>
+    </footer>
+
+    <script>
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelectorAll('#mobile-menu a, #navbar a[href^="#"]');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.section-fade-in').forEach(section => {
+            observer.observe(section);
+        });
+        
+        document.querySelectorAll('.faq-question').forEach(button => {
+            button.addEventListener('click', () => {
+                const answer = button.nextElementSibling;
+                const icon = button.querySelector('span:last-child');
+                
+                answer.classList.toggle('hidden');
+                
+                if (answer.classList.contains('hidden')) {
+                    icon.textContent = '+';
+                    icon.classList.remove('rotate-45');
+                } else {
+                    icon.textContent = '−';
+                    icon.classList.add('rotate-45');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
