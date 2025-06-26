@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hack the Planet: Architecting a Net Positive Data Center</title>
+    <title id="page-title">Hack the Planet: Architecting a Net Positive Data Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Eco-Tech Harmony (Light Beige/Off-white background, Deep Teal primary, Gold/Orange accent) -->
-    <!-- Application Structure Plan: A single-page application with a sticky top navigation for easy access to key sections (About, Theme, Schedule, etc.). The design prioritizes user flow, starting with an engaging hero section, followed by interactive cards for 'Focus Areas' to make information digestible. A timeline format for the 'Schedule' and a consolidated 'Registration' section with a clear call-to-action button guide the user logically through the event details. An FAQ section was added to anticipate user questions and improve usability. This structure was chosen over a linear report format to create an engaging, explorable, and user-friendly experience for potential participants. -->
-    <!-- Visualization & Content Choices: Report Info: Event Focus Areas -> Goal: Make them engaging and easy to explore -> Viz/Presentation Method: Interactive HTML/CSS cards with icons and hover effects -> Interaction: On hover, cards lift up -> Justification: More visually appealing and interactive than a plain list. Report Info: Event Schedule -> Goal: Present timeline clearly -> Viz/Presentation Method: Vertical timeline with HTML/CSS -> Interaction: N/A -> Justification: A timeline is the most intuitive way to represent a schedule. Report Info: Awards -> Goal: Showcase awards attractively -> Viz/Presentation Method: A grid layout with HTML/CSS -> Interaction: N/A -> Justification: A grid is clean and organized. Library/Method: Vanilla JS for interactions, Tailwind CSS for all styling, Unicode characters for icons. -->
+    <!-- Application Structure Plan: A single-page application with a sticky top navigation for easy access to key sections (About, Theme, Schedule, etc.). The design prioritizes user flow, starting with an engaging hero section, followed by interactive cards for 'Focus Areas' to make information digestible by expanding on click. A timeline format for the 'Schedule' and a consolidated 'Registration' section with a clear call-to-action button guide the user logically through the event details. An FAQ section was added to anticipate user questions and improve usability. Language switching functionality allows users to toggle between English and Traditional Chinese content. -->
+    <!-- Visualization & Content Choices: Report Info: Event Focus Areas -> Goal: Make them engaging and easy to explore with more detail -> Viz/Presentation Method: Interactive HTML/CSS cards with icons and expandable hidden div for detailed text -> Interaction: On click, card expands/collapses to show/hide detailed explanation and examples -> Justification: Keeps initial view clean while allowing deeper dive without navigating away. Report Info: Event Schedule -> Goal: Present timeline clearly -> Viz/Presentation Method: Vertical timeline with HTML/CSS -> Interaction: N/A -> Justification: A timeline is the most intuitive way to represent a schedule. Library/Method: Vanilla JS for interactions, Tailwind CSS for all styling, Unicode characters for icons. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -48,10 +48,22 @@
         .focus-card {
             transition: transform 0.3s, box-shadow 0.3s;
             background-color: white;
+            cursor: pointer;
         }
         .focus-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        .focus-card-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.5s ease-out;
+            opacity: 0;
+        }
+        .focus-card-details.expanded {
+            max-height: 500px; /* Adjust based on content */
+            opacity: 1;
+            padding-top: 1rem;
         }
         .section-fade-in {
             opacity: 0;
@@ -80,13 +92,15 @@
 
     <header id="navbar" class="bg-white/80 backdrop-blur-md shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <a href="#home" class="font-bold text-2xl text-teal-800">Hack the Planet</a>
+            <a href="#home" class="font-bold text-2xl text-teal-800" id="nav-title">Hack the Planet</a>
             <div class="hidden md:flex space-x-6 items-center">
-                <a href="#about" class="nav-link text-gray-700">About</a>
-                <a href="#theme" class="nav-link text-gray-700">Theme</a>
-                <a href="#schedule" class="nav-link text-gray-700">Schedule</a>
-                <a href="#faq" class="nav-link text-gray-700">FAQ</a>
-                <a href="#register" class="btn-secondary font-bold py-2 px-4 rounded-lg">Register Now</a>
+                <a href="#about" class="nav-link text-gray-700" id="nav-about">About</a>
+                <a href="#theme" class="nav-link text-gray-700" id="nav-theme">Theme</a>
+                <a href="#schedule" class="nav-link text-gray-700" id="nav-schedule">Schedule</a>
+                <a href="#faq" class="nav-link text-gray-700" id="nav-faq">FAQ</a>
+                <a href="#register" class="btn-secondary font-bold py-2 px-4 rounded-lg" id="nav-register-btn">Register Now</a>
+                <button id="lang-toggle-en" class="text-sm font-semibold text-teal-700 bg-gray-200 px-3 py-1 rounded-md">EN</button>
+                <button id="lang-toggle-zh" class="text-sm font-semibold text-gray-700 bg-gray-200 px-3 py-1 rounded-md">繁體中文</button>
             </div>
             <div class="md:hidden">
                 <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
@@ -95,42 +109,46 @@
             </div>
         </nav>
         <div id="mobile-menu" class="hidden md:hidden">
-            <a href="#about" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">About</a>
-            <a href="#theme" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Theme</a>
-            <a href="#schedule" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">Schedule</a>
-            <a href="#faq" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100">FAQ</a>
-            <a href="#register" class="block py-2 px-4 text-sm text-gray-700 bg-yellow-400 font-bold hover:bg-yellow-500">Register Now</a>
+            <a href="#about" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" id="m-nav-about">About</a>
+            <a href="#theme" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" id="m-nav-theme">Theme</a>
+            <a href="#schedule" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" id="m-nav-schedule">Schedule</a>
+            <a href="#faq" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" id="m-nav-faq">FAQ</a>
+            <a href="#register" class="block py-2 px-4 text-sm text-gray-700 bg-yellow-400 font-bold hover:bg-yellow-500" id="m-nav-register-btn">Register Now</a>
+            <div class="flex justify-center py-2">
+                <button id="m-lang-toggle-en" class="text-sm font-semibold text-teal-700 bg-gray-200 px-3 py-1 rounded-md mx-1">EN</button>
+                <button id="m-lang-toggle-zh" class="text-sm font-semibold text-gray-700 bg-gray-200 px-3 py-1 rounded-md mx-1">繁體中文</button>
+            </div>
         </div>
     </header>
 
     <main>
         <section id="home" class="hero-section text-white min-h-screen flex items-center">
             <div class="container mx-auto px-6 text-center">
-                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4">Hack the Planet:</h1>
-                <h2 class="text-2xl md:text-4xl font-light mb-8">Architecting a Net Positive Data Center</h2>
-                <p class="text-xl mb-4 font-semibold">Friday, August 29th, 2025</p>
-                <p class="text-lg mb-8">GIS Taichung Xinwuri Convention Center</p>
-                <a href="#register" class="btn-secondary text-xl font-bold py-4 px-8 rounded-lg shadow-lg">Register Your Team</a>
+                <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4" id="hero-title">Hack the Planet:</h1>
+                <h2 class="text-2xl md:text-4xl font-light mb-8" id="hero-subtitle">Architecting a Net Positive Data Center</h2>
+                <p class="text-xl mb-4 font-semibold" id="hero-date">Friday, September 26th, 2025</p>
+                <p class="text-lg mb-8" id="hero-venue">GIS Taichung Xinwuri Convention Center</p>
+                <a href="#register" class="btn-secondary text-xl font-bold py-4 px-8 rounded-lg shadow-lg" id="hero-register-btn">Register Your Team</a>
             </div>
         </section>
 
         <section id="about" class="py-20 section-fade-in">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800">About the Hackathon</h2>
-                    <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">Welcome to Hack the Planet, where innovation meets impact! This hackathon challenges you to reimagine what a data center can be.</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800" id="about-heading">About the Hackathon</h2>
+                    <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto" id="about-intro">Welcome to Hack the Planet, where innovation meets impact! This hackathon challenges you to reimagine what a data center can be.</p>
                 </div>
                 <div class="grid md:grid-cols-2 gap-12 items-center">
                     <div>
-                        <h3 class="text-2xl font-bold text-teal-700 mb-4">The Challenge</h3>
-                        <p class="text-gray-700 mb-4">Go beyond simply minimizing harm; design a visionary data center that achieves a truly net positive impact on both our environment and cultural well-being. You'll leverage Google's cutting-edge Gemini multimodal AI capabilities to develop groundbreaking solutions.</p>
-                        <p class="text-gray-700">This is your chance to demonstrate how essential data infrastructure can become a powerful force for good within its community and for the planet.</p>
+                        <h3 class="text-2xl font-bold text-teal-700 mb-4" id="about-challenge-title">The Challenge</h3>
+                        <p class="text-gray-700 mb-4" id="about-challenge-p1">Go beyond simply minimizing harm; design a visionary data center that achieves a truly net positive impact on both our environment and cultural well-being. You'll leverage Google's cutting-edge Gemini multimodal AI capabilities to develop groundbreaking solutions.</p>
+                        <p class="text-gray-700" id="about-challenge-p2">This is your chance to demonstrate how essential data infrastructure can become a powerful force for good within its community and for the planet.</p>
                     </div>
                     <div class="bg-white p-8 rounded-lg shadow-lg border-l-4 border-yellow-400">
-                        <h3 class="text-2xl font-bold text-teal-700 mb-4">Who Can Participate?</h3>
-                        <p class="text-gray-700 mb-2"><span class="font-bold">Audience:</span> Junior and senior university students, plus new graduates.</p>
-                        <p class="text-gray-700 mb-2"><span class="font-bold">Team Size:</span> 3-5 members per team.</p>
-                        <p class="text-gray-700"><span class="font-bold">Who we're looking for:</span> Bright minds from any discipline—engineering, design, environmental science, humanities—eager to make a tangible impact.</p>
+                        <h3 class="text-2xl font-bold text-teal-700 mb-4" id="about-who-title">Who Can Participate?</h3>
+                        <p class="text-gray-700 mb-2" id="about-audience"><span class="font-bold" id="about-audience-label">Audience:</span> Junior and senior university students, plus new graduates.</p>
+                        <p class="text-gray-700 mb-2" id="about-team-size"><span class="font-bold" id="about-team-size-label">Team Size:</span> 3-5 members per team.</p>
+                        <p class="text-gray-700" id="about-looking-for"><span class="font-bold" id="about-looking-for-label">Who we're looking for:</span> Bright minds from any discipline—engineering, design, environmental science, humanities—eager to make a tangible impact.</p>
                     </div>
                 </div>
             </div>
@@ -139,44 +157,64 @@
         <section id="theme" class="py-20 bg-gray-100 section-fade-in">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800">Theme & Focus Areas</h2>
-                    <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">Architect a Net Positive Data Center for Environmental & Cultural Impact. Projects can focus on one specific area or develop comprehensive solutions that span multiple domains.</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800" id="theme-heading">Theme & Focus Areas</h2>
+                    <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto" id="theme-intro">Architect a Net Positive Data Center for Environmental & Cultural Impact. Projects can focus on one specific area or develop comprehensive solutions that span multiple domains.</p>
                 </div>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="focus-card p-8 rounded-lg text-center">
+                    <div class="focus-card p-8 rounded-lg text-center" data-target="land-details">
                         <div class="text-5xl mb-4">🌳</div>
-                        <h3 class="text-xl font-bold text-teal-700 mb-2">Land & Biodiversity</h3>
-                        <p class="text-gray-600">Design sites that restore local ecosystems or enhance biodiversity.</p>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2" id="land-brief-title">Land & Biodiversity</h3>
+                        <p class="text-gray-600" id="land-brief-desc">Design sites that restore local ecosystems or enhance biodiversity.</p>
+                        <div class="focus-card-details text-left mt-4 text-gray-700">
+                            <h4 class="font-semibold text-teal-600 mb-2" id="land-details-title">Net Positive Land Impact:</h4>
+                            <p id="land-details-desc">Achieving net positive impact for land involves more than just minimizing the data center's physical footprint. It means actively enhancing the surrounding ecology. This could include designing green roofs and walls that create new habitats, restoring native planting on site to increase biodiversity, or implementing smart water runoff management systems that benefit local soil health and reduce erosion. For example, a data center might establish a pollinator garden larger than its construction area, actively reforesting nearby degraded lands using AI-driven drone monitoring for restoration.</p>
+                        </div>
                     </div>
-                    <div class="focus-card p-8 rounded-lg text-center">
+                    <div class="focus-card p-8 rounded-lg text-center" data-target="air-details">
                         <div class="text-5xl mb-4">💨</div>
-                        <h3 class="text-xl font-bold text-teal-700 mb-2">Air Quality</h3>
-                        <p class="text-gray-600">Develop solutions to improve air quality and reduce emissions.</p>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2" id="air-brief-title">Air Quality</h3>
+                        <p class="text-gray-600" id="air-brief-desc">Develop solutions to improve air quality and reduce emissions.</p>
+                        <div class="focus-card-details text-left mt-4 text-gray-700">
+                            <h4 class="font-semibold text-teal-600 mb-2" id="air-details-title">Net Positive Air Quality Impact:</h4>
+                            <p id="air-details-desc">A net positive impact on air quality means the data center contributes to cleaner air than it consumes or impacts. Beyond simply filtering its own exhaust, this could involve developing active air purification systems that clean ambient air in the surrounding community, implementing innovative CO2 capture technologies that remove more carbon than the facility emits, or integrating smart monitoring networks that provide real-time hyper-local air quality data to empower emission control strategies for the wider area.</p>
+                        </div>
                     </div>
-                    <div class="focus-card p-8 rounded-lg text-center">
+                    <div class="focus-card p-8 rounded-lg text-center" data-target="energy-details">
                         <div class="text-5xl mb-4">⚡️</div>
-                        <h3 class="text-xl font-bold text-teal-700 mb-2">Energy & Climate</h3>
-                        <p class="text-gray-600">Innovate for extreme energy efficiency and renewable integration.</p>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2" id="energy-brief-title">Energy & Climate</h3>
+                        <p class="text-gray-600" id="energy-brief-desc">Innovate for extreme energy efficiency and renewable integration.</p>
+                        <div class="focus-card-details text-left mt-4 text-gray-700">
+                            <h4 class="font-semibold text-teal-600 mb-2" id="energy-details-title">Net Positive Energy Impact:</h4>
+                            <p id="energy-details-desc">Net positive energy means a data center generates more clean, renewable energy than it consumes, effectively \'giving back\' electricity to the grid or local community. This goes beyond carbon neutrality. Examples include building large-scale on-site renewable energy farms (solar, wind, geothermal), implementing AI-optimized energy management systems that drastically reduce consumption, or pioneering waste heat repurposing projects that provide free heating for nearby homes, community centers, or agricultural greenhouses, offsetting fossil fuel use.</p>
+                        </div>
                     </div>
-                    <div class="focus-card p-8 rounded-lg text-center">
+                    <div class="focus-card p-8 rounded-lg text-center" data-target="water-details">
                         <div class="text-5xl mb-4">💧</div>
-                        <h3 class="text-xl font-bold text-teal-700 mb-2">Water Resources & Pollution</h3>
-                        <p class="text-gray-600">Design systems for net positive water usage and pollution prevention.</p>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2" id="water-brief-title">Water Resources & Pollution</h3>
+                        <p class="text-gray-600" id="water-brief-desc">Design systems for net positive water usage and pollution prevention.</p>
+                        <div class="focus-card-details text-left mt-4 text-gray-700">
+                            <h4 class="font-semibold text-teal-600 mb-2" id="water-details-title">Net Positive Water Impact:</h4>
+                            <p id="water-details-desc">Achieving net positive water usage involves replenishing local water sources more than the data center consumes. This can be done by implementing advanced closed-loop cooling systems that minimize evaporation, collecting and treating rainwater or greywater for non-potable uses (e.g., landscaping, toilet flushing), or investing in local water conservation projects like aquifer recharge or wetland restoration. A net positive data center might return highly purified wastewater that is cleaner than the source water it receives.</p>
+                        </div>
                     </div>
-                    <div class="focus-card p-8 rounded-lg text-center md:col-span-2 lg:col-span-1">
+                    <div class="focus-card p-8 rounded-lg text-center md:col-span-2 lg:col-span-1" data-target="culture-details">
                         <div class="text-5xl mb-4">🏛️</div>
-                        <h3 class="text-xl font-bold text-teal-700 mb-2">Cultural Integration & Heritage Preservation</h3>
-                        <p class="text-gray-600">Create models that celebrate local Taiwanese culture and support heritage.</p>
+                        <h3 class="text-xl font-bold text-teal-700 mb-2" id="culture-brief-title">Cultural Integration & Heritage Preservation</h3>
+                        <p class="text-gray-600" id="culture-brief-desc">Create models that celebrate local Taiwanese culture and support heritage.</p>
+                        <div class="focus-card-details text-left mt-4 text-gray-700">
+                            <h4 class="font-semibold text-teal-600 mb-2" id="culture-details-title">Net Positive Cultural Impact:</h4>
+                            <p id="culture-details-desc">Net positive cultural impact means the data center actively contributes to the vibrancy and preservation of local Taiwanese culture and heritage. This could involve designing facilities that incorporate local architectural aesthetics or materials, creating interactive digital archives of traditional crafts or historical narratives using the data center's processing power, or developing AI-powered platforms that promote local languages and arts. For example, a data center might host a public exhibition space showcasing local cultural history, utilizing its infrastructure to power virtual reality reconstructions of historical sites or provide digital literacy training to local seniors.</p>
+                        </div>
                     </div>
                 </div>
                  <div class="mt-12 bg-white p-8 rounded-lg shadow-lg border-l-4 border-teal-500">
-                    <h3 class="text-2xl font-bold text-teal-700 mb-4">Mandatory Technology: Google Gemini AI</h3>
-                    <p class="text-gray-700 mb-4">All proposed solutions must fundamentally leverage Google Gemini's capabilities. You'll apply its advanced features across areas like:</p>
+                    <h3 class="text-2xl font-bold text-teal-700 mb-4" id="mandatory-tech-title">Mandatory Technology: Google Gemini AI</h3>
+                    <p class="text-gray-700 mb-4" id="mandatory-tech-intro">All proposed solutions must fundamentally leverage Google Gemini's capabilities. You'll apply its advanced features across areas like:</p>
                     <ul class="list-disc list-inside space-y-2 text-gray-600">
-                        <li><b>Data Analysis:</b> Multimodal understanding of sensor data, satellite imagery, regulations, etc.</li>
-                        <li><b>Design & Generation:</b> Creative generation of content, optimized designs, or simulated scenarios.</li>
-                        <li><b>Coding:</b> Code assistance and generation for intelligent systems and automation.</li>
-                        <li><b>Expression:</b> Innovative ways to express complex ideas through multimedia generation.</li>
+                        <li id="gemini-data-analysis"><b>Data Analysis:</b> Multimodal understanding of sensor data, satellite imagery, regulations, etc.</li>
+                        <li id="gemini-design-gen"><b>Design & Generation:</b> Creative generation of content, optimized designs, or simulated scenarios.</li>
+                        <li id="gemini-coding"><b>Coding:</b> Code assistance and generation for intelligent systems and automation.</li>
+                        <li id="gemini-expression"><b>Expression:</b> Innovative ways to express complex ideas through multimedia generation.</li>
                     </ul>
                 </div>
             </div>
@@ -185,36 +223,36 @@
         <section id="schedule" class="py-20 section-fade-in">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800">Event Agenda</h2>
-                    <p class="text-lg text-gray-600 mt-4">A full day of innovation, learning, and connection.</p>
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800" id="schedule-heading">Event Agenda</h2>
+                    <p class="text-lg text-gray-600 mt-4" id="schedule-intro">A full day of innovation, learning, and connection.</p>
                 </div>
                 <div class="relative max-w-2xl mx-auto">
                     <div class="border-l-4 border-teal-200 absolute h-full top-0" style="left: 0.625rem;"></div>
                     <div class="space-y-12">
                         <div class="pl-10 relative timeline-item">
-                            <p class="font-bold text-lg text-teal-700">9:15 - 11:30</p>
-                            <h3 class="text-xl font-semibold mb-1">Hackathon Presentations</h3>
-                            <p class="text-gray-600">10 teams will present their solutions. Each team has ~15 minutes (5-10 min presentation + 5 min commentary).</p>
+                            <p class="font-bold text-lg text-teal-700" id="agenda-1-time">9:15 - 11:30</p>
+                            <h3 class="text-xl font-semibold mb-1" id="agenda-1-title">Hackathon Presentations</h3>
+                            <p class="text-gray-600" id="agenda-1-desc">10 teams will present their solutions. Each team has ~15 minutes (5-10 min presentation + 5 min commentary).</p>
                         </div>
                         <div class="pl-10 relative timeline-item">
-                            <p class="font-bold text-lg text-teal-700">11:30 - 12:45</p>
-                            <h3 class="text-xl font-semibold mb-1">Mingle & Lunch</h3>
-                            <p class="text-gray-600">Network with fellow participants, mentors, and judges over a delicious lunch.</p>
+                            <p class="font-bold text-lg text-teal-700" id="agenda-2-time">11:30 - 12:45</p>
+                            <h3 class="text-xl font-semibold mb-1" id="agenda-2-title">Mingle & Lunch</h3>
+                            <p class="text-gray-600" id="agenda-2-desc">Network with fellow participants, mentors, and judges over a delicious lunch.</p>
                         </div>
                         <div class="pl-10 relative timeline-item">
-                            <p class="font-bold text-lg text-teal-700">13:30 - 15:00</p>
-                            <h3 class="text-xl font-semibold mb-1">Career Panel</h3>
-                            <p class="text-gray-600">Gain insights from industry experts about careers in tech, sustainability, and AI.</p>
+                            <p class="font-bold text-lg text-teal-700" id="agenda-3-time">13:30 - 15:00</p>
+                            <h3 class="text-xl font-semibold mb-1" id="agenda-3-title">Career Panel</h3>
+                            <p class="text-gray-600" id="agenda-3-desc">Gain insights from industry experts about careers in tech, sustainability, and AI.</p>
                         </div>
                          <div class="pl-10 relative timeline-item">
-                            <p class="font-bold text-lg text-teal-700">15:00 - 15:30</p>
-                            <h3 class="text-xl font-semibold mb-1">Awards Ceremony</h3>
-                            <p class="text-gray-600">Celebrating the most innovative and impactful solutions of the day.</p>
+                            <p class="font-bold text-lg text-teal-700" id="agenda-4-time">15:00 - 15:30</p>
+                            <h3 class="text-xl font-semibold mb-1" id="agenda-4-title">Awards Ceremony</h3>
+                            <p class="text-gray-600" id="agenda-4-desc">Celebrating the most innovative and impactful solutions of the day.</p>
                         </div>
                         <div class="pl-10 relative timeline-item">
-                            <p class="font-bold text-lg text-teal-700">16:00</p>
-                            <h3 class="text-xl font-semibold mb-1">Event Concludes</h3>
-                            <p class="text-gray-600">Final remarks and networking opportunities.</p>
+                            <p class="font-bold text-lg text-teal-700" id="agenda-5-time">16:00</p>
+                            <h3 class="text-xl font-semibold mb-1" id="agenda-5-title">Event Concludes</h3>
+                            <p class="text-gray-600" id="agenda-5-desc">Final remarks and networking opportunities.</p>
                         </div>
                     </div>
                 </div>
@@ -224,82 +262,82 @@
         <section id="register" class="py-20 bg-gray-100 section-fade-in">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
-                     <h2 class="text-3xl md:text-4xl font-bold text-teal-800">Register Your Team</h2>
-                     <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto">Ready to make an impact? Registration is limited to 10 teams on a first-come, first-served basis.</p>
+                     <h2 class="text-3xl md:text-4xl font-bold text-teal-800" id="register-heading">Register Your Team</h2>
+                     <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto" id="register-intro">Ready to make an impact? Registration is limited to 10 teams on a first-come, first-served basis.</p>
                 </div>
                 <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-                    <h3 class="text-2xl font-bold text-teal-700 mb-6">Registration Process & Important Notes</h3>
+                    <h3 class="text-2xl font-bold text-teal-700 mb-6" id="register-process-title">Registration Process & Important Notes</h3>
                     <div class="grid md:grid-cols-2 gap-8 text-gray-700">
                         <div>
-                            <h4 class="font-bold text-lg mb-2">Key Dates</h4>
+                            <h4 class="font-bold text-lg mb-2" id="reg-key-dates-title">Key Dates</h4>
                             <ul class="list-disc list-inside space-y-2">
-                                <li><b>Registration Period:</b> June 16 - July 11</li>
-                                <li><b>Cancellation Deadline:</b> July 18</li>
-                                <li><b>Initial Project Idea Submission:</b> July 28 - August 1</li>
-                                <li><b>Final Confirmation Emails Sent by:</b> July 25</li>
+                                <li id="reg-period"><b>Registration Period:</b> June 16 - July 11</li> 
+                                <li id="reg-cancel"><b>Cancellation Deadline:</b> July 18</li>
+                                <li id="reg-initial-idea"><b>Initial Project Idea Submission:</b> July 28 - August 1</li>
+                                <li id="reg-final-confirm"><b>Final Confirmation Emails Sent by:</b> July 25</li>
                             </ul>
                         </div>
                         <div>
-                            <h4 class="font-bold text-lg mb-2">Submission Deliverables</h4>
+                            <h4 class="font-bold text-lg mb-2" id="submit-deliverables-title">Submission Deliverables</h4>
                             <ul class="list-disc list-inside space-y-2">
-                                <li>Functional Prototype or PoC (Digital is okay)</li>
-                                <li>10-minute Presentation (in English)</li>
-                                <li>Optional: Link to GitHub repository</li>
+                                <li id="submit-prototype">Functional Prototype or PoC (Digital is okay)</li>
+                                <li id="submit-presentation">10-minute Presentation (in English)</li>
+                                <li id="submit-github">Optional: Link to GitHub repository</li>
                             </ul>
                         </div>
                     </div>
-                    <div class="mt-8 text-gray-600 bg-teal-50 p-4 rounded-lg">
+                    <div class="mt-8 text-gray-600 bg-teal-50 p-4 rounded-lg" id="reg-cancel-note">
                         <p>If you need to cancel, please email us at **2025_Hackathon@google.com** by July 18th. This allows us to notify waitlisted teams, who will receive their confirmation by July 25th.</p>
                     </div>
-                    <div class="mt-8 text-center">
-                        <a href="#" class="btn-primary text-xl font-bold py-4 px-8 rounded-lg shadow-lg">[Registration Link Here]</a>
-                         <p class="mt-4 text-sm text-gray-500">Registration opens June 16th. Secure your spot!</p>
+                    <div class="mt-8 text-center" id="reg-confirmation-note">
+                         <p class="text-sm text-gray-500 mb-4">Upon successful initial registration, you will receive an immediate confirmation message. Final registration confirmation emails for the first 10 registered teams will be sent by July 25th. Please ensure you check your inbox, including spam folders.</p>
+                        <a href="#" class="btn-primary text-xl font-bold py-4 px-8 rounded-lg shadow-lg" id="register-btn-main">[Registration Link Here]</a>
+                        <p class="mt-4 text-sm text-gray-500" id="register-btn-note">Registration opens June 16th. Secure your spot!</p>
                     </div>
                 </div>
             </div>
         </section>
-        
 
         <section id="faq" class="py-20 bg-gray-100 section-fade-in">
             <div class="container mx-auto px-6">
                  <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800">Frequently Asked Questions</h2>
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800" id="faq-heading">Frequently Asked Questions</h2>
                  </div>
                  <div class="max-w-3xl mx-auto space-y-4">
                      <div class="faq-item bg-white p-4 rounded-lg shadow-md">
-                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center">
-                             <span>Is there a cost to participate?</span>
+                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center" id="faq-cost-q">
+                             <span id="faq-cost-q-text">Is there a cost to participate?</span>
                              <span class="transform transition-transform duration-300">+</span>
                          </button>
-                         <div class="faq-answer hidden mt-2 text-gray-600">
+                         <div class="faq-answer hidden mt-2 text-gray-600" id="faq-cost-a">
                              No, participation in Hack the Planet is completely free for all selected teams.
                          </div>
                      </div>
                      <div class="faq-item bg-white p-4 rounded-lg shadow-md">
-                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center">
-                             <span>Who owns the intellectual property (IP) of the projects?</span>
+                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center" id="faq-ip-q">
+                             <span id="faq-ip-q-text">Who owns the intellectual property (IP) of the projects?</span>
                              <span class="transform transition-transform duration-300">+</span>
                          </button>
-                         <div class="faq-answer hidden mt-2 text-gray-600">
+                         <div class="faq-answer hidden mt-2 text-gray-600" id="faq-ip-a">
                             Teams retain full ownership of the intellectual property they create during the hackathon.
                          </div>
                      </div>
                       <div class="faq-item bg-white p-4 rounded-lg shadow-md">
-                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center">
-                             <span>Do I need to be physically present at the venue?</span>
+                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center" id="faq-physical-q">
+                             <span id="faq-physical-q-text">Do I need to be physically present at the venue?</span>
                              <span class="transform transition-transform duration-300">+</span>
                          </button>
-                         <div class="faq-answer hidden mt-2 text-gray-600">
+                         <div class="faq-answer hidden mt-2 text-gray-600" id="faq-physical-a">
                             Yes, this is a full-day, in-person event held at the GIS Taichung Xinwuri Convention Center. All team members are expected to attend.
                          </div>
                      </div>
                      <div class="faq-item bg-white p-4 rounded-lg shadow-md">
-                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center">
-                            <span>What should I bring to the event?</span>
+                         <button class="faq-question w-full text-left font-semibold text-lg text-teal-700 flex justify-between items-center" id="faq-bring-q">
+                            <span id="faq-bring-q-text">What should I bring to the event?</span>
                              <span class="transform transition-transform duration-300">+</span>
                          </button>
-                         <div class="faq-answer hidden mt-2 text-gray-600">
-                           Please bring your laptop, chargers, and any other hardware you need for your project. We will provide Wi-Fi, power outlets, food, and drinks.
+                         <div class="faq-answer hidden mt-2 text-gray-600" id="faq-bring-a">
+                           Please bring your laptop(with HDMI adapter), chargers, and any other hardware you need for your project. We will provide Wi-Fi, power outlets, food and drinks.
                          </div>
                      </div>
                  </div>
@@ -309,9 +347,9 @@
 
     <footer class="bg-teal-900 text-white py-8">
         <div class="container mx-auto px-6 text-center">
-            <p class="font-bold text-xl mb-2">Hack the Planet 2025</p>
-            <p>Have questions? Contact us at <a href="mailto:2025_Hackathon@google.com" class="text-yellow-300 hover:underline">2025_Hackathon@google.com</a></p>
-            <p class="mt-4 text-sm text-teal-200">Learn more about <a href="https://datacenters.google/" target="_blank" rel="noopener noreferrer" class="hover:underline">Google Data Centers</a>.</p>
+            <p class="font-bold text-xl mb-2" id="footer-title">Hack the Planet 2025</p>
+            <p id="footer-contact-q">Have questions? Contact us at <a href="mailto:2025_Hackathon@google.com" class="text-yellow-300 hover:underline" id="footer-email">2025_Hackathon@google.com</a></p>
+            <p class="mt-4 text-sm text-teal-200" id="footer-dc-link">Learn more about <a href="https://datacenters.google/" target="_blank" rel="noopener noreferrer" class="hover:underline" id="footer-dc-text">Google Data Centers</a>.</p>
         </div>
     </footer>
 
@@ -344,6 +382,18 @@
             observer.observe(section);
         });
         
+        // Focus Card expand/collapse logic
+        document.querySelectorAll('.focus-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const details = card.querySelector('.focus-card-details');
+                details.classList.toggle('expanded');
+                // Optional: Scroll to the top of the card if it expands, for better UX on mobile
+                if (details.classList.contains('expanded')) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+
         document.querySelectorAll('.faq-question').forEach(button => {
             button.addEventListener('click', () => {
                 const answer = button.nextElementSibling;
@@ -359,6 +409,298 @@
                     icon.classList.add('rotate-45');
                 }
             });
+        });
+
+        const content = {
+            en: {
+                // Nav
+                'nav-title': 'Hack the Planet',
+                'nav-about': 'About',
+                'nav-theme': 'Theme',
+                'nav-schedule': 'Schedule',
+                'nav-faq': 'FAQ',
+                'nav-register-btn': 'Register Now',
+                'm-nav-about': 'About',
+                'm-nav-theme': 'Theme',
+                'm-nav-schedule': 'Schedule',
+                'm-nav-faq': 'FAQ',
+                'm-nav-register-btn': 'Register Now',
+
+                // Hero
+                'hero-title': 'Hack the Planet:',
+                'hero-subtitle': 'Architecting a Net Positive Data Center',
+                'hero-date': 'Friday, September 26th, 2025',
+                'hero-venue': 'GIS Taichung Xinwuri Convention Center',
+                'hero-register-btn': 'Register Your Team',
+
+                // About
+                'about-heading': 'About the Hackathon',
+                'about-intro': 'Welcome to Hack the Planet, where innovation meets impact! This hackathon challenges you to reimagine what a data center can be.',
+                'about-challenge-title': 'The Challenge',
+                'about-challenge-p1': 'Go beyond simply minimizing harm; design a visionary data center that achieves a truly net positive impact on both our environment and cultural well-being. You\'ll leverage Google\'s cutting-edge Gemini multimodal AI capabilities to develop groundbreaking solutions.',
+                'about-challenge-p2': 'This is your chance to demonstrate how essential data infrastructure can become a powerful force for good within its community and for the planet.',
+                'about-who-title': 'Who Can Participate?',
+                'about-audience-label': 'Audience:',
+                'about-audience': 'Junior and senior university students, plus new graduates.',
+                'about-team-size-label': 'Team Size:',
+                'about-team-size': '3-5 members per team.',
+                'about-looking-for-label': 'Who we\'re looking for:',
+                'about-looking-for': 'Bright minds from any discipline—engineering, design, environmental science, humanities—eager to make a tangible impact.',
+
+                // Theme & Focus Areas
+                'theme-heading': 'Theme & Focus Areas',
+                'theme-intro': 'Architect a Net Positive Data Center for Environmental & Cultural Impact. Projects can focus on one specific area or develop comprehensive solutions that span multiple domains.',
+                'land-brief-title': 'Land & Biodiversity',
+                'land-brief-desc': 'Design sites that restore local ecosystems or enhance biodiversity.',
+                'land-details-title': 'Net Positive Land Impact:',
+                'land-details-desc': 'Achieving net positive impact for land involves more than just minimizing the data center\'s physical footprint. It means actively enhancing the surrounding ecology. This could include designing green roofs and walls that create new habitats, restoring native planting on site to increase biodiversity, or implementing smart water runoff management systems that benefit local soil health and reduce erosion. For example, a data center might establish a pollinator garden larger than its construction area, actively reforesting nearby degraded lands using AI-driven drone monitoring for restoration.',
+                'air-brief-title': 'Air Quality',
+                'air-brief-desc': 'Develop solutions to improve air quality and reduce emissions.',
+                'air-details-title': 'Net Positive Air Quality Impact:',
+                'air-details-desc': 'A net positive impact on air quality means the data center contributes to cleaner air than it consumes or impacts. Beyond simply filtering its own exhaust, this could involve developing active air purification systems that clean ambient air in the surrounding community, implementing innovative CO2 capture technologies that remove more carbon than the facility emits, or integrating smart monitoring networks that provide real-time hyper-local air quality data to empower emission control strategies for the wider area.',
+                'energy-brief-title': 'Energy & Climate',
+                'energy-brief-desc': 'Innovate for extreme energy efficiency and renewable integration.',
+                'energy-details-title': 'Net Positive Energy Impact:',
+                'energy-details-desc': 'Net positive energy means a data center generates more clean, renewable energy than it consumes, effectively \'giving back\' electricity to the grid or local community. This goes beyond carbon neutrality. Examples include building large-scale on-site renewable energy farms (solar, wind, geothermal), implementing AI-optimized energy management systems that drastically reduce consumption, or pioneering waste heat repurposing projects that provide free heating for nearby homes, community centers, or agricultural greenhouses, offsetting fossil fuel use.',
+                'water-brief-title': 'Water Resources & Pollution',
+                'water-brief-desc': 'Design systems for net positive water usage and pollution prevention.',
+                'water-details-title': 'Net Positive Water Impact:',
+                'water-details-desc': 'Achieving net positive water usage involves replenishing local water sources more than the data center consumes. This can be done by implementing advanced closed-loop cooling systems that minimize evaporation, collecting and treating rainwater or greywater for non-potable uses (e.g., landscaping, toilet flushing), or investing in local water conservation projects like aquifer recharge or wetland restoration. A net positive data center might return highly purified wastewater that is cleaner than the source water it receives.',
+                'culture-brief-title': 'Cultural Integration & Heritage Preservation',
+                'culture-brief-desc': 'Create models that celebrate local Taiwanese culture and support heritage.',
+                'culture-details-title': 'Net Positive Cultural Impact:',
+                'culture-details-desc': 'Net positive cultural impact means the data center actively contributes to the vibrancy and preservation of local Taiwanese culture and heritage. This could involve designing facilities that incorporate local architectural aesthetics or materials, creating interactive digital archives of traditional crafts or historical narratives using the data center\'s processing power, or developing AI-powered platforms that promote local languages and arts. For example, a data center might host a public exhibition space showcasing local cultural history, utilizing its infrastructure to power virtual reality reconstructions of historical sites or provide digital literacy training to local seniors.',
+                'mandatory-tech-title': 'Mandatory Technology: Google Gemini AI',
+                'mandatory-tech-intro': 'All proposed solutions must fundamentally leverage Google Gemini\'s capabilities. You\'ll apply its advanced features across areas like:',
+                'gemini-data-analysis': '<b>Data Analysis:</b> Multimodal understanding of sensor data, satellite imagery, regulations, etc.',
+                'gemini-design-gen': '<b>Design & Generation:</b> Creative generation of content, optimized designs, or simulated scenarios.',
+                'gemini-coding': '<b>Coding:</b> Code assistance and generation for intelligent systems and automation.',
+                'gemini-expression': '<b>Expression:</b> Innovative ways to express complex ideas through multimedia generation.',
+
+                // Schedule
+                'schedule-heading': 'Event Agenda',
+                'schedule-intro': 'A full day of innovation, learning, and connection.',
+                'agenda-1-time': '9:15 - 11:30',
+                'agenda-1-title': 'Hackathon Presentations',
+                'agenda-1-desc': '10 teams will present their solutions. Each team has ~15 minutes (5-10 min presentation + 5 min commentary).',
+                'agenda-2-time': '11:30 - 12:45',
+                'agenda-2-title': 'Mingle & Lunch',
+                'agenda-2-desc': 'Network with fellow participants, mentors, and judges over a delicious lunch.',
+                'agenda-3-time': '13:30 - 15:00',
+                'agenda-3-title': 'Career Panel',
+                'agenda-3-desc': 'Gain insights from industry experts about careers in tech, sustainability, and AI.',
+                'agenda-4-time': '15:00 - 15:30',
+                'agenda-4-title': 'Awards Ceremony',
+                'agenda-4-desc': 'Celebrating the most innovative and impactful solutions of the day.',
+                'agenda-5-time': '16:00',
+                'agenda-5-title': 'Event Concludes',
+                'agenda-5-desc': 'Final remarks and networking opportunities.',
+
+                // Register
+                'register-heading': 'Register Your Team',
+                'register-intro': 'Ready to make an impact? Registration is limited to 10 teams on a first-come, first-served basis.',
+                'register-process-title': 'Registration Process & Important Notes',
+                'reg-key-dates-title': 'Key Dates',
+                'reg-period': '<b>Registration Period:</b> June 16 - July 11', 
+                'reg-cancel': '<b>Cancellation Deadline:</b> July 18',
+                'reg-initial-idea': '<b>Initial Project Idea Submission:</b> July 28 - August 1',
+                'reg-final-confirm': '<b>Final Confirmation Emails Sent by:</b> July 25',
+                'submit-deliverables-title': 'Submission Deliverables',
+                'submit-prototype': 'Functional Prototype or PoC (Digital is okay)',
+                'submit-presentation': '10-minute Presentation (in English)',
+                'submit-github': 'Optional: Link to GitHub repository',
+                'reg-cancel-note': 'If you need to cancel, please email us at **2025_Hackathon@google.com** by July 18th. This allows us to notify waitlisted teams, who will receive their confirmation by July 25th.',
+                'reg-confirmation-note': 'Upon successful initial registration, you will receive an immediate confirmation message. Final registration confirmation emails for the first 10 registered teams will be sent by July 25th. Please ensure you check your inbox, including spam folders.',
+                'register-btn-main': '[Registration Link Here]',
+                'register-btn-note': 'Registration opens June 16th. Secure your spot!',
+
+                // FAQ
+                'faq-heading': 'Frequently Asked Questions',
+                'faq-cost-q-text': 'Is there a cost to participate?',
+                'faq-cost-a': 'No, participation in Hack the Planet is completely free for all selected teams.',
+                'faq-ip-q-text': 'Who owns the intellectual property (IP) of the projects?',
+                'faq-ip-a': 'Teams retain full ownership of the intellectual property they create during the hackathon.',
+                'faq-physical-q-text': 'Do I need to be physically present at the venue?',
+                'faq-physical-a': 'Yes, this is a full-day, in-person event held at the GIS Taichung Xinwuri Convention Center. All team members are expected to attend.',
+                'faq-bring-q-text': 'What should I bring to the event?',
+                'faq-bring-a': 'Please bring your laptop(with HDMI adapter), chargers, and any other hardware you need for your project. We will provide Wi-Fi, power outlets, food and drinks.',
+
+                // Footer
+                'footer-title': 'Hack the Planet 2025',
+                'footer-contact-q': 'Have questions? Contact us at ',
+                'footer-email': '2025_Hackathon@google.com',
+                'footer-dc-link': 'Learn more about ',
+                'footer-dc-text': 'Google Data Centers.'
+            },
+            zh_tw: {
+                // Nav
+                'nav-title': '駭客地球',
+                'nav-about': '關於活動',
+                'nav-theme': '主題與焦點',
+                'nav-schedule': '活動議程',
+                'nav-awards': '獎項榮譽',
+                'nav-faq': '常見問題',
+                'nav-register-btn': '立即報名',
+                'm-nav-about': '關於活動',
+                'm-nav-theme': '主題與焦點',
+                'm-nav-schedule': '活動議程',
+                'm-nav-faq': '常見問題',
+                'm-nav-register-btn': '立即報名',
+
+                // Hero
+                'hero-title': '駭客地球：',
+                'hero-subtitle': '打造具備「淨正向」影響的資料中心',
+                'hero-date': '2025 年 9 月 26 日 (星期五)',
+                'hero-venue': '台中新烏日會展中心',
+                'hero-register-btn': '立即報名',
+
+                // About
+                'about-heading': '關於黑客松',
+                'about-intro': '歡迎來到「駭客地球」黑客松！本次活動將挑戰您重新想像資料中心的可能性。',
+                'about-challenge-title': '核心挑戰',
+                'about-challenge-p1': '我們的目標不僅是最小化資料中心的負面影響，更要設計出一個能對環境和文化福祉創造「淨正向」貢獻的願景資料中心。您將運用 Google 最尖端的 Gemini 多模態 AI 能力，開發突破性的解決方案。',
+                'about-challenge-p2': '這是一個絕佳機會，讓您展示關鍵的數據基礎設施如何成為一股造福社群與地球的強大力量。',
+                'about-who-title': '誰可以參加？',
+                'about-audience-label': '對象：',
+                'about-audience': '大學三、四年級學生及應屆畢業生。',
+                'about-team-size-label': '隊伍人數：',
+                'about-team-size': '每隊 3-5 人。',
+                'about-looking-for-label': '我們在尋找：',
+                'about-looking-for': '來自不同學科領域—工程、設計、環境科學、人文等—渴望創造實質影響的人們。',
+
+                // Theme & Focus Areas
+                'theme-heading': '主題與焦點領域',
+                'theme-intro': '設計具備環境與文化「淨正向」影響的資料中心。參賽專案可專注於單一領域或跨多領域的綜合性方案。',
+                'land-brief-title': '大地（土地與生物多樣性）',
+                'land-brief-desc': '設計能恢復當地生態系統、提升生物多樣性或整合永續土地管理實踐的方案。',
+                'land-details-title': '淨正向土地影響：',
+                'land-details-desc': '實現土地的淨正向影響，不僅僅是最小化資料中心的實體足跡，更要積極地提升周邊生態。這包括設計創造新棲息地的綠屋頂和綠牆、在基地內恢復原生植被以增加生物多樣性，或實施智能徑流管理系統，從而有益於當地土壤健康並減少侵蝕。例如，資料中心可以建立比其建設區域更大的傳粉花園，利用 AI 驅動的無人機監測，積極地對附近退化的土地進行造林復育。',
+                'air-brief-title': '空氣（大氣與空氣品質）',
+                'air-brief-desc': '開發能改善空氣品質、減少排放的解決方案。',
+                'air-details-title': '淨正向空氣品質影響：',
+                'air-details-desc': '對空氣品質產生淨正向影響，意味著資料中心比其消耗或影響的空氣，對空氣的貢獻更大。除了簡單地過濾自身的廢氣，這還可以包括開發主動式空氣淨化系統，清潔周邊社區的環境空氣；實施創新性的二氧化碳捕捉技術，移除比設施排放更多的碳；或整合智能監測網絡，提供超本地的即時空氣品質數據，以支持更大範圍的排放控制策略。',
+                'energy-brief-title': '能源與氣候',
+                'energy-brief-desc': '針對極致能源效率與再生能源整合進行創新。',
+                'energy-details-title': '淨正向能源影響：',
+                'energy-details-desc': '淨正向能源意味著資料中心生產的清潔、再生能源比其消耗的更多，有效地「回饋」電力給電網或當地社區。這超越了碳中和。例如，在基地內建設大型再生能源發電設施（太陽能、風能、地熱），實施 AI 優化的能源管理系統大幅減少消耗，或開創性地將廢熱再利用於為附近的家庭、社區中心或農業溫室提供免費供暖，從而抵消化石燃料的使用。',
+                'water-brief-title': '水資源與污染',
+                'water-brief-desc': '設計淨正向水資源利用與污染防治系統。',
+                'water-details-title': '淨正向水資源影響：',
+                'water-details-desc': '實現水資源的淨正向利用，包括資料中心補充當地水源的量超過其消耗的量。這可以透過實施先進的閉環冷卻系統，最大限度地減少蒸發；收集和處理雨水或中水用於非飲用水用途（例如：景觀灌溉、廁所沖洗）；或投資於當地水資源保育項目，如地下水回補或濕地復育。一個淨正向的資料中心可能會排放比其接收水源更純淨的處理後廢水。',
+                'culture-brief-title': '文化整合與遺產保護',
+                'culture-brief-desc': '創造慶祝在地台灣文化並支持其傳承的模式。',
+                'culture-details-title': '淨正向文化影響：',
+                'culture-details-desc': '淨正向文化影響意味著資料中心積極地為在地台灣文化和遺產的活力與保存做出貢獻。這可以包括設計融合在地建築美學或材料的設施、利用資料中心的處理能力建立傳統技藝或歷史敘事的互動式數位檔案，或開發推廣在地語言和藝術的 AI 平台。例如，資料中心可以設立一個公共展覽空間，展示在地文化歷史，利用其基礎設施為歷史遺址提供虛擬實境重建，或為當地老年人提供數位素養培訓。',
+                'mandatory-tech-title': '必用技術：Google Gemini AI',
+                'mandatory-tech-intro': '所有提案的解決方案都必須核心運用 Google Gemini 的能力。您將在以下領域應用 Gemini 的先進功能：',
+                'gemini-data-analysis': '<b>數據分析：</b>多模態理解感測器數據、衛星圖像、法規等。',
+                'gemini-design-gen': '<b>設計與生成：</b>創意生成內容、優化設計或模擬情境。',
+                'gemini-coding': '<b>程式碼：</b>協助程式碼編寫，用於智能系統和自動化。',
+                'gemini-expression': '<b>表達：</b>透過多媒體生成，創新表達複雜概念或文化敘事。',
+
+                // Schedule
+                'schedule-heading': '活動議程',
+                'schedule-intro': '全日創新、學習與交流。',
+                'agenda-1-time': '09:15 - 11:30',
+                'agenda-1-title': '黑客松專案簡報',
+                'agenda-1-desc': '10 隊將展示其解決方案。每隊約 15 分鐘（5-10 分鐘簡報 + 5 分鐘評審講評）。',
+                'agenda-2-time': '11:30 - 12:45',
+                'agenda-2-title': '交流與午餐',
+                'agenda-2-desc': '與參賽者、導師和評審在美味午餐中交流。',
+                'agenda-3-time': '13:30 - 15:00',
+                'agenda-3-title': '職涯座談會',
+                'agenda-3-desc': '向業界專家學習科技、永續和 AI 領域的職涯洞察。',
+                'agenda-4-time': '15:00 - 15:30',
+                'agenda-4-title': '頒獎典禮',
+                'agenda-4-desc': '慶祝當天最具創新和影響力的解決方案。',
+                'agenda-5-time': '16:00',
+                'agenda-5-title': '活動結束',
+                'agenda-5-desc': '總結發言與交流機會。',
+
+                // Register
+                'register-heading': '立即報名',
+                'register-intro': '準備好創造影響了嗎？報名名額限 10 隊，採先到先得制。',
+                'register-process-title': '報名流程與重要注意事項',
+                'reg-key-dates-title': '重要日期',
+                'reg-period': '<b>報名期間：</b>6 月 16 日 - 7 月 11 日', 
+                'reg-cancel': '<b>取消報名截止日期：</b>7 月 18 日',
+                'reg-initial-idea': '<b>專案初步構想提交：</b>7 月 28 日 - 8 月 1 日',
+                'reg-final-confirm': '<b>最終報名確認信件發送：</b>7 月 25 日前',
+                'submit-deliverables-title': '提交成果要求',
+                'submit-prototype': '功能原型或概念驗證 (可接受數位形式)',
+                'submit-presentation': '10 分鐘簡報 (英文)',
+                'submit-github': '可選：原始碼儲存庫連結 (例如 GitHub)',
+                'reg-cancel-note': '若您需取消報名，請務必於 7 月 18 日前發送郵件至 2025_Hackathon@google.com。這將使我們能夠通知候補隊伍，候補隊伍將於 7 月 25 日前收到確認通知。',
+                'reg-confirmation-note': '成功提交報名表後，您將立即收到一封報名成功的確認訊息。前 10 組隊伍的最終報名確認信件將於 7 月 25 日前發送。請務必檢查您的收件匣，包含垃圾郵件。',
+                'register-btn-main': '[報名連結請點此]',
+                'register-btn-note': '報名於 6 月 16 日開放。立即確保您的名額！',
+
+                // FAQ
+                'faq-heading': '常見問題',
+                'faq-cost-q-text': '參加黑客松需要費用嗎？',
+                'faq-cost-a': '不需要，所有入選隊伍參加「駭客地球」黑客松都是完全免費的。',
+                'faq-ip-q-text': '專案的智慧財產權 (IP) 歸誰所有？',
+                'faq-ip-a': '團隊保留在黑客松期間所創作智慧財產權的完整所有權。',
+                'faq-physical-q-text': '我需要親自到場參加活動嗎？',
+                'faq-physical-a': '是的，本次活動為全日實體活動，將在台中新烏日會展中心舉行。所有團隊成員都必須到場參與。',
+                'faq-bring-q-text': '我應該帶什麼參加活動？',
+                'faq-bring-a': '請攜帶您的筆記型電腦(具有HDMI轉接頭)、充電器以及專案所需的任何其他硬體設備。我們將提供 Wi-Fi、電源插座、食物和飲料。',
+
+                // Footer
+                'footer-title': '駭客地球 2025',
+                'footer-contact-q': '有任何問題嗎？請聯絡我們：',
+                'footer-email': '2025_Hackathon@google.com',
+                'footer-dc-link': '深入了解 ',
+                'footer-dc-text': 'Google 資料中心。'
+            }
+        };
+
+        let currentLang = localStorage.getItem('hackathonLang') || 'en';
+
+        function updateContent(lang) {
+            currentLang = lang;
+            localStorage.setItem('hackathonLang', lang);
+
+            const elements = document.querySelectorAll('[id]');
+            elements.forEach(element => {
+                const id = element.id;
+                if (content[lang][id] !== undefined) {
+                    element.innerHTML = content[lang][id]; // Use innerHTML for bold tags
+                }
+            });
+
+            // Update active state of language buttons
+            document.querySelectorAll('[id^="lang-toggle-"]').forEach(btn => {
+                btn.classList.remove('text-teal-700', 'font-semibold', 'bg-gray-200');
+                btn.classList.add('text-gray-700', 'bg-gray-100');
+            });
+             document.querySelectorAll('[id^="m-lang-toggle-"]').forEach(btn => {
+                btn.classList.remove('text-teal-700', 'font-semibold', 'bg-gray-200');
+                btn.classList.add('text-gray-700', 'bg-gray-100');
+            });
+
+
+            const activeDesktopBtn = document.getElementById(`lang-toggle-${lang}`);
+            if (activeDesktopBtn) {
+                activeDesktopBtn.classList.remove('text-gray-700', 'bg-gray-100');
+                activeDesktopBtn.classList.add('text-teal-700', 'font-semibold', 'bg-gray-200');
+            }
+            const activeMobileBtn = document.getElementById(`m-lang-toggle-${lang}`);
+            if (activeMobileBtn) {
+                activeMobileBtn.classList.remove('text-gray-700', 'bg-gray-100');
+                activeMobileBtn.classList.add('text-teal-700', 'font-semibold', 'bg-gray-200');
+            }
+        }
+
+        // Initialize content on load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateContent(currentLang);
+
+            // Add event listeners for language toggles
+            document.getElementById('lang-toggle-en').addEventListener('click', () => updateContent('en'));
+            document.getElementById('lang-toggle-zh').addEventListener('click', () => updateContent('zh_tw'));
+            document.getElementById('m-lang-toggle-en').addEventListener('click', () => updateContent('en'));
+            document.getElementById('m-lang-toggle-zh').addEventListener('click', () => updateContent('zh_tw'));
         });
     </script>
 </body>
