@@ -97,6 +97,7 @@
                 <a href="#about" class="nav-link text-gray-700" id="nav-about">About</a>
                 <a href="#theme" class="nav-link text-gray-700" id="nav-theme">Theme</a>
                 <a href="#schedule" class="nav-link text-gray-700" id="nav-schedule">Schedule</a>
+                <a href="#career-panel" class="nav-link text-gray-700" id="nav-career-panel">Career Panel</a> <!-- NEW NAV LINK -->
                 <a href="#faq" class="nav-link text-gray-700" id="nav-faq">FAQ</a>
                 <a href="#register" class="btn-secondary font-bold py-2 px-4 rounded-lg" id="nav-register-btn">Register Now</a>
                 <button id="lang-toggle-en" class="text-sm font-semibold text-teal-700 bg-gray-200 px-3 py-1 rounded-md">EN</button>
@@ -112,6 +113,7 @@
             <a href="#about" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" id="m-nav-about">About</a>
             <a href="#theme" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" id="m-nav-theme">Theme</a>
             <a href="#schedule" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" id="m-nav-schedule">Schedule</a>
+            <a href="#career-panel" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" id="m-nav-career-panel">Career Panel</a> <!-- NEW MOBILE NAV LINK -->
             <a href="#faq" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100" id="m-nav-faq">FAQ</a>
             <a href="#register" class="block py-2 px-4 text-sm text-gray-700 bg-yellow-400 font-bold hover:bg-yellow-500" id="m-nav-register-btn">Register Now</a>
             <div class="flex justify-center py-2">
@@ -141,14 +143,14 @@
                 <div class="grid md:grid-cols-2 gap-12 items-center">
                     <div>
                         <h3 class="text-2xl font-bold text-teal-700 mb-4" id="about-challenge-title">The Challenge</h3>
-                        <p class="text-gray-700 mb-4" id="about-challenge-p1">Go beyond simply minimizing harm; design a visionary data center that achieves a truly net positive impact on both our environment and cultural well-being. You'll leverage Google's cutting-edge Gemini multimodal AI capabilities to develop groundbreaking solutions.</p>
+                        <p class="text-gray-700 mb-4" id="about-challenge-p1">Go beyond simply minimizing harm; design a visionary data center that achieves a truly net positive impact on both our environment and cultural well-being. You\'ll leverage Google\'s cutting-edge Gemini multimodal AI capabilities to develop groundbreaking solutions.</p>
                         <p class="text-gray-700" id="about-challenge-p2">This is your chance to demonstrate how essential data infrastructure can become a powerful force for good within its community and for the planet.</p>
                     </div>
                     <div class="bg-white p-8 rounded-lg shadow-lg border-l-4 border-yellow-400">
                         <h3 class="text-2xl font-bold text-teal-700 mb-4" id="about-who-title">Who Can Participate?</h3>
                         <p class="text-gray-700 mb-2" id="about-audience"><span class="font-bold" id="about-audience-label">Audience:</span> Junior and senior university students, plus new graduates.</p>
                         <p class="text-gray-700 mb-2" id="about-team-size"><span class="font-bold" id="about-team-size-label">Team Size:</span> 3-5 members per team.</p>
-                        <p class="text-gray-700" id="about-looking-for"><span class="font-bold" id="about-looking-for-label">Who we're looking for:</span> Bright minds from any discipline—engineering, design, environmental science, humanities—eager to make a tangible impact.</p>
+                        <p class="text-gray-700" id="about-looking-for"><span class="font-bold" id="about-looking-for-label">Who we\'re looking for:</span> Bright minds from any discipline—engineering, design, environmental science, humanities—eager to make a tangible impact.</p>
                     </div>
                 </div>
             </div>
@@ -160,8 +162,10 @@
                     <h2 class="text-3xl md:text-4xl font-bold text-teal-800" id="theme-heading">Theme & Focus Areas</h2>
                     <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto" id="theme-intro">Architect a Net Positive Data Center for Environmental & Cultural Impact. Projects can focus on one specific area or develop comprehensive solutions that span multiple domains.</p>
                 </div>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="focus-card p-8 rounded-lg text-center" data-target="land-details">
+                <!-- Inverted Trapezoid Layout (3-2) for Focus Areas -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-start justify-items-center">
+                    <!-- Row 1: Three cards -->
+                    <div class="focus-card p-8 rounded-lg text-center w-full md:w-auto">
                         <div class="text-5xl mb-4">🌳</div>
                         <h3 class="text-xl font-bold text-teal-700 mb-2" id="land-brief-title">Land & Biodiversity</h3>
                         <p class="text-gray-600" id="land-brief-desc">Design sites that restore local ecosystems or enhance biodiversity.</p>
@@ -170,7 +174,7 @@
                             <p id="land-details-desc">Achieving net positive impact for land involves more than just minimizing the data center\'s physical footprint. It means actively enhancing the surrounding ecology. This could include designing green roofs and walls that create new habitats, restoring native planting on site to increase biodiversity, or implementing smart water runoff management systems that benefit local soil health and reduce erosion. For example, a data center might establish a pollinator garden larger than its construction area, actively reforesting nearby degraded lands using AI-driven drone monitoring for restoration.</p>
                         </div>
                     </div>
-                    <div class="focus-card p-8 rounded-lg text-center" data-target="air-details">
+                    <div class="focus-card p-8 rounded-lg text-center w-full md:w-auto">
                         <div class="text-5xl mb-4">💨</div>
                         <h3 class="text-xl font-bold text-teal-700 mb-2" id="air-brief-title">Air Quality</h3>
                         <p class="text-gray-600" id="air-brief-desc">Develop solutions to improve air quality and reduce emissions.</p>
@@ -179,7 +183,7 @@
                             <p id="air-details-desc">A net positive impact on air quality means the data center contributes to cleaner air than it consumes or impacts. Beyond simply filtering its own exhaust, this could involve developing active air purification systems that clean ambient air in the surrounding community, implementing innovative CO2 capture technologies that remove more carbon than the facility emits, or integrating smart monitoring networks that provide real-time hyper-local air quality data to empower emission control strategies for the wider area.</p>
                         </div>
                     </div>
-                    <div class="focus-card p-8 rounded-lg text-center" data-target="energy-details">
+                    <div class="focus-card p-8 rounded-lg text-center w-full md:w-auto">
                         <div class="text-5xl mb-4">⚡️</div>
                         <h3 class="text-xl font-bold text-teal-700 mb-2" id="energy-brief-title">Energy & Climate</h3>
                         <p class="text-gray-600" id="energy-brief-desc">Innovate for extreme energy efficiency and renewable integration.</p>
@@ -188,22 +192,27 @@
                             <p id="energy-details-desc">Net positive energy means a data center generates more clean, renewable energy than it consumes, effectively \'giving back\' electricity to the grid or local community. This goes beyond carbon neutrality. Examples include building large-scale on-site renewable energy farms (solar, wind, geothermal), implementing AI-optimized energy management systems that drastically reduce consumption, or pioneering waste heat repurposing projects that provide free heating for nearby homes, community centers, or agricultural greenhouses, offsetting fossil fuel use.</p>
                         </div>
                     </div>
-                    <div class="focus-card p-8 rounded-lg text-center" data-target="water-details">
-                        <div class="text-5xl mb-4">💧</div>
-                        <h3 class="text-xl font-bold text-teal-700 mb-2" id="water-brief-title">Water Resources & Pollution</h3>
-                        <p class="text-gray-600" id="water-brief-desc">Design systems for net positive water usage and pollution prevention.</p>
-                        <div class="focus-card-details text-left mt-4 text-gray-700">
-                            <h4 class="font-semibold text-teal-600 mb-2" id="water-details-title">Net Positive Water Impact:</h4>
-                            <p id="water-details-desc">Achieving net positive water usage involves replenishing local water sources more than the data center consumes. This can be done by implementing advanced closed-loop cooling systems that minimize evaporation, collecting and treating rainwater or greywater for non-potable uses (e.g., landscaping, toilet flushing), or investing in local water conservation projects like aquifer recharge or wetland restoration. A net positive data center might return highly purified wastewater that is cleaner than the source water it receives.</p>
+                </div>
+                <!-- Separate div for the second row (2 cards), centered within the overall section -->
+                <div class="flex justify-center mt-8 w-full">
+                    <div class="grid md:grid-cols-2 gap-8 lg:w-2/3"> <!-- w-2/3 or max-w-2xl to constrain width for centering -->
+                        <div class="focus-card p-8 rounded-lg text-center w-full md:w-auto">
+                            <div class="text-5xl mb-4">💧</div>
+                            <h3 class="text-xl font-bold text-teal-700 mb-2" id="water-brief-title">Water Resources & Pollution</h3>
+                            <p class="text-gray-600" id="water-brief-desc">Design systems for net positive water usage and pollution prevention.</p>
+                            <div class="focus-card-details text-left mt-4 text-gray-700">
+                                <h4 class="font-semibold text-teal-600 mb-2" id="water-details-title">Net Positive Water Impact:</h4>
+                                <p id="water-details-desc">Achieving net positive water usage involves replenishing local water sources more than the data center consumes. This can be done by implementing advanced closed-loop cooling systems that minimize evaporation, collecting and treating rainwater or greywater for non-potable uses (e.g., landscaping, toilet flushing), or investing in local water conservation projects like aquifer recharge or wetland restoration. A net positive data center might return highly purified wastewater that is cleaner than the source water it receives.</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="focus-card p-8 rounded-lg text-center md:col-span-2 lg:col-span-1" data-target="culture-details">
-                        <div class="text-5xl mb-4">🏛️</div>
-                        <h3 class="text-xl font-bold text-teal-700 mb-2" id="culture-brief-title">Cultural Integration & Heritage Preservation</h3>
-                        <p class="text-gray-600" id="culture-brief-desc">Create models that celebrate local Taiwanese culture and support heritage.</p>
-                        <div class="focus-card-details text-left mt-4 text-gray-700">
-                            <h4 class="font-semibold text-teal-600 mb-2" id="culture-details-title">Net Positive Cultural Impact:</h4>
-                            <p id="culture-details-desc">Net positive cultural impact means the data center actively contributes to the vibrancy and preservation of local Taiwanese culture and heritage. This could involve designing facilities that incorporate local architectural aesthetics or materials, creating interactive digital archives of traditional crafts or historical narratives using the data center\'s processing power, or developing AI-powered platforms that promote local languages and arts. For example, a data center might host a public exhibition space showcasing local cultural history, utilizing its infrastructure to power virtual reality reconstructions of historical sites or provide digital literacy training to local seniors.</p>
+                        <div class="focus-card p-8 rounded-lg text-center w-full md:w-auto">
+                            <div class="text-5xl mb-4">🏛️</div>
+                            <h3 class="text-xl font-bold text-teal-700 mb-2" id="culture-brief-title">Cultural Integration & Heritage Preservation</h3>
+                            <p class="text-gray-600" id="culture-brief-desc">Create models that celebrate local Taiwanese culture and support heritage.</p>
+                            <div class="focus-card-details text-left mt-4 text-gray-700">
+                                <h4 class="font-semibold text-teal-600 mb-2" id="culture-details-title">Net Positive Cultural Impact:</h4>
+                                <p id="culture-details-desc">Net positive cultural impact means the data center actively contributes to the vibrancy and preservation of local Taiwanese culture and heritage. This could involve designing facilities that incorporate local architectural aesthetics or materials, creating interactive digital archives of traditional crafts or historical narratives using the data center\'s processing power, or developing AI-powered platforms that promote local languages and arts. For example, a data center might host a public exhibition space showcasing local cultural history, utilizing its infrastructure to power virtual reality reconstructions of historical sites or provide digital literacy training to local seniors.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -291,6 +300,23 @@
                     <div class="mt-8 text-center" id="reg-confirmation-block">
                          <a href="#" class="btn-primary text-xl font-bold py-4 px-8 rounded-lg shadow-lg" id="register-btn-main">[Registration Link Here]</a>
                         <p class="mt-4 text-sm text-gray-500" id="register-btn-note">Registration opens June 16th. Secure your spot!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="career-panel" class="py-20 bg-gray-100 section-fade-in"> <!-- NEW CAREER PANEL SECTION -->
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl md:text-4xl font-bold text-teal-800" id="career-panel-heading">Career Panel: Insights from Industry Experts</h2>
+                    <p class="text-lg text-gray-600 mt-4 max-w-3xl mx-auto" id="career-panel-intro">Join our esteemed panel of industry leaders to gain valuable insights into career paths in technology, sustainability, and AI.</p>
+                </div>
+                <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-bold text-teal-700 mb-6" id="career-panel-details-title">What to Expect</h3>
+                    <p class="text-gray-700 mb-4" id="career-panel-details-p1">This session offers a unique opportunity to learn from professionals at the forefront of innovation. They will share their experiences, discuss emerging trends, and provide guidance on navigating your career journey in fields critical to our planet's future. Whether you're a student planning your next steps or a new graduate exploring opportunities, this panel will provide valuable perspectives.</p>
+                    <p class="text-gray-700" id="career-panel-details-p2">The career panel is open to all hackathon participants and other interested individuals. Separate registration is required.</p>
+                    <div class="mt-8 text-center">
+                        <a href="#" class="btn-secondary text-xl font-bold py-4 px-8 rounded-lg shadow-lg" id="career-panel-register-btn">[Career Panel Registration Link Here]</a>
                     </div>
                 </div>
             </div>
@@ -416,11 +442,13 @@
                 'nav-about': 'About',
                 'nav-theme': 'Theme',
                 'nav-schedule': 'Schedule',
+                'nav-career-panel': 'Career Panel', // NEW NAV CONTENT
                 'nav-faq': 'FAQ',
                 'nav-register-btn': 'Register Now',
                 'm-nav-about': 'About',
                 'm-nav-theme': 'Theme',
                 'm-nav-schedule': 'Schedule',
+                'm-nav-career-panel': 'Career Panel', // NEW MOBILE NAV CONTENT
                 'm-nav-faq': 'FAQ',
                 'm-nav-register-btn': 'Register Now',
 
@@ -509,6 +537,15 @@
                 'reg-cancel-note': 'If you need to cancel, please email us at **2025_Hackathon@google.com** by July 18th. This allows us to notify waitlisted teams, who will receive their confirmation by July 25th.',
                 'reg-confirmation-block': '<a href="#" class="btn-primary text-xl font-bold py-4 px-8 rounded-lg shadow-lg" id="register-btn-main">[Registration Link Here]</a><p class="mt-4 text-sm text-gray-500" id="register-btn-note">Registration opens June 16th. Secure your spot!</p>',
 
+                // Career Panel Section
+                'career-panel-heading': 'Career Panel: Insights from Industry Experts', // NEW
+                'career-panel-intro': 'Join our esteemed panel of industry leaders to gain valuable insights into career paths in technology, sustainability, and AI.', // NEW
+                'career-panel-details-title': 'What to Expect', // NEW
+                'career-panel-details-p1': 'This session offers a unique opportunity to learn from professionals at the forefront of innovation. They will share their experiences, discuss emerging trends, and provide guidance on navigating your career journey in fields critical to our planet\'s future. Whether you\'re a student planning your next steps or a new graduate exploring opportunities, this panel will provide valuable perspectives.', // NEW
+                'career-panel-details-p2': 'The career panel is open to all hackathon participants and other interested individuals. Separate registration is required.', // NEW
+                'career-panel-register-btn': '[Career Panel Registration Link Here]', // NEW
+
+
                 // FAQ
                 'faq-heading': 'Frequently Asked Questions',
                 'faq-cost-q-text': 'Is there a cost to participate?',
@@ -518,7 +555,7 @@
                 'faq-physical-q-text': 'Do I need to be physically present at the venue?',
                 'faq-physical-a': 'Yes, this is a full-day, in-person event held at the GIS Taichung Xinwuri Convention Center. All team members are expected to attend.',
                 'faq-bring-q-text': 'What should I bring to the event?',
-                'faq-bring-a': 'Please bring your laptop(with HDMI adapter), chargers, and any other hardware you need for your project. We will provide Wi-Fi, power outlets, and a comfortable working environment.',
+                'faq-bring-a': 'Please bring your laptop(with HDMI adapter), chargers, and any other hardware you need for your project.',
 
                 // Footer
                 'footer-title': 'Hack the Planet 2025',
@@ -531,12 +568,14 @@
                 'nav-about': '關於活動',
                 'nav-theme': '主題與焦點',
                 'nav-schedule': '活動議程',
+                'nav-career-panel': '職涯座談會', // NEW NAV CONTENT
                 'nav-awards': '獎項榮譽',
                 'nav-faq': '常見問題',
                 'nav-register-btn': '立即報名',
                 'm-nav-about': '關於活動',
                 'm-nav-theme': '主題與焦點',
                 'm-nav-schedule': '活動議程',
+                'm-nav-career-panel': '職涯座談會', // NEW MOBILE NAV CONTENT
                 'm-nav-faq': '常見問題',
                 'm-nav-register-btn': '立即報名',
 
@@ -624,6 +663,15 @@
                 'submit-github': '可選：原始碼儲存庫連結 (例如 GitHub)',
                 'reg-cancel-note': '若您需取消報名，請務必於 7 月 18 日前發送郵件至 2025_Hackathon@google.com。這將使我們能夠通知候補隊伍，候補隊伍將於 7 月 25 日前收到確認通知。',
                 'reg-confirmation-block': '<a href="#" class="btn-primary text-xl font-bold py-4 px-8 rounded-lg shadow-lg" id="register-btn-main">[報名連結請點此]</a><p class="mt-4 text-sm text-gray-500" id="register-btn-note">報名於 6 月 16 日開放。立即確保您的名額！</p>',
+
+                // Career Panel Section
+                'career-panel-heading': '職涯座談會：業界專家洞察', // NEW
+                'career-panel-intro': '加入我們業界領袖的座談會，獲取科技、永續與 AI 領域職涯發展的寶貴見解。', // NEW
+                'career-panel-details-title': '座談會內容', // NEW
+                'career-panel-details-p1': '本次座談會提供一個獨特的機會，讓您向走在創新最前沿的專業人士學習。他們將分享經驗、討論新興趨勢，並為您在對地球未來至關重要的領域中，規劃職涯發展提供指導。無論您是規劃下一步的學生，還是探索機會的新鮮人，本次座談會都將提供寶貴的視角。', // NEW
+                'career-panel-details-p2': '本次職涯座談會開放給所有黑客松參賽者及其他感興趣的人士參與。需單獨報名。', // NEW
+                'career-panel-register-btn': '[職涯座談會報名連結請點此]', // NEW
+
 
                 // FAQ
                 'faq-heading': '常見問題',
